@@ -1,0 +1,1731 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AI Hackathon: Private Banking | The Collaborative Canvas</title>
+
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Architects+Daughter&family=Caveat:wght@400;500;600;700&family=Patrick+Hand&family=Kalam:wght@300;400;700&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+
+<!-- GSAP -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+<style>
+/* ============================================
+   CSS VARIABLES — Stitch Design System
+   ============================================ */
+:root {
+  --bg: #f6f6f4;
+  --bg-white: #ffffff;
+  --primary: #005ab1;
+  --primary-dim: #004f9c;
+  --primary-container: #63a1ff;
+  --on-primary: #eff2ff;
+  --on-primary-container: #00224a;
+  --secondary: #b5161e;
+  --secondary-dim: #a40113;
+  --secondary-container: #ffc3bd;
+  --on-secondary: #ffefed;
+  --on-secondary-container: #940010;
+  --tertiary: #6d5a00;
+  --tertiary-container: #fdd400;
+  --on-tertiary-container: #594a00;
+  --surface: #f6f6f4;
+  --surface-container: #e8e8e6;
+  --surface-container-low: #f0f1ef;
+  --surface-container-high: #e2e3e1;
+  --surface-dim: #d3d5d3;
+  --on-surface: #2d2f2e;
+  --on-surface-variant: #5a5c5b;
+  --outline: #767776;
+  --outline-variant: #acadac;
+
+  --font-marker: 'Architects Daughter', cursive;
+  --font-hand: 'Caveat', cursive;
+  --font-hand-alt: 'Patrick Hand', cursive;
+  --font-hand-clean: 'Kalam', cursive;
+  --font-headline: 'Architects Daughter', cursive;
+  --font-body: 'Patrick Hand', cursive;
+  --font-label: 'Plus Jakarta Sans', sans-serif;
+}
+
+/* ============================================
+   RESET & BASE
+   ============================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  scroll-snap-type: y mandatory;
+  overflow-y: scroll;
+  scroll-behavior: smooth;
+  font-size: 20px;
+}
+
+body {
+  font-family: var(--font-hand-alt);
+  color: var(--on-surface);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  font-weight: 400;
+}
+
+::selection {
+  background: var(--primary-container);
+  color: var(--on-primary-container);
+}
+
+/* Paper texture overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.06;
+  background-image: url("data:image/svg+xml,%3Csvg width='200' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ============================================
+   PAGE / SLIDE SYSTEM
+   ============================================ */
+.page {
+  min-height: 100vh;
+  scroll-snap-align: start;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Whiteboard surface with dot grid */
+.page--board {
+  background: radial-gradient(circle at 50% 50%, #ffffff 0%, #f6f6f4 100%);
+}
+.page--board::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(var(--surface-dim) 1px, transparent 1px);
+  background-size: 32px 32px;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.page--white {
+  background: var(--bg-white);
+}
+
+.page--primary {
+  background: var(--primary);
+  color: var(--on-primary);
+}
+
+.page--dark {
+  background: #0d0f0e;
+  color: #f6f6f4;
+}
+
+.page-inner {
+  max-width: 1100px;
+  width: 100%;
+  position: relative;
+  z-index: 2;
+}
+
+.page-inner--narrow { max-width: 800px; }
+.page-inner--wide { max-width: 1300px; }
+
+/* ============================================
+   WHITEBOARD FURNITURE — Pens, Eraser, Magnets, Tape
+   ============================================ */
+
+/* Corner magnets */
+.board-magnet {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--surface-dim);
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+  z-index: 3;
+}
+
+/* Marker pens — bottom-left cluster */
+.board-pens {
+  position: absolute;
+  bottom: 2rem;
+  left: 2rem;
+  display: flex;
+  gap: 1rem;
+  align-items: flex-end;
+  z-index: 3;
+}
+
+.pen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  transition: transform 0.3s ease;
+  cursor: default;
+}
+
+.pen:hover { transform: rotate(0deg) translateY(-4px); }
+
+.pen-body {
+  width: 14px;
+  height: 80px;
+  border-radius: 999px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 2px 4px 8px rgba(0,0,0,0.15);
+}
+
+.pen-body::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 28px;
+  background: rgba(0,0,0,0.1);
+}
+
+.pen-body::after {
+  content: '';
+  position: absolute;
+  top: 8px;
+  left: 3px;
+  width: 8px;
+  height: 14px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 999px;
+}
+
+.pen-cap {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--surface-dim);
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pen-cap-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  opacity: 0.4;
+}
+
+.pen--blue .pen-body { background: var(--primary); }
+.pen--blue .pen-cap-dot { background: var(--primary); }
+.pen--red .pen-body { background: var(--secondary); }
+.pen--red .pen-cap-dot { background: var(--secondary); }
+.pen--yellow .pen-body { background: var(--tertiary); }
+.pen--yellow .pen-cap-dot { background: var(--tertiary); }
+
+/* Eraser */
+.board-eraser {
+  width: 90px;
+  height: 40px;
+  background: #27272a;
+  border-radius: 6px;
+  box-shadow: 3px 6px 12px rgba(0,0,0,0.2);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  margin-left: 1rem;
+  transform: rotate(-2deg);
+}
+
+.eraser-top {
+  flex: 1;
+  background: #18181b;
+  border-bottom: 1px solid #3f3f46;
+  padding: 4px;
+}
+
+.eraser-top-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 2px;
+  border: 1px solid rgba(255,255,255,0.06);
+}
+
+.eraser-felt {
+  height: 12px;
+  background: #e4e4e7;
+}
+
+/* Tape strips */
+.board-tape {
+  position: absolute;
+  width: 100px;
+  height: 28px;
+  background: rgba(253,212,0,0.25);
+  backdrop-filter: blur(1px);
+  border-top: 1px solid rgba(253,212,0,0.15);
+  border-bottom: 1px solid rgba(253,212,0,0.15);
+  z-index: 4;
+}
+
+/* ============================================
+   TYPOGRAPHY
+   ============================================ */
+.font-headline { font-family: var(--font-marker); }
+.font-body { font-family: var(--font-hand); }
+.font-label { font-family: var(--font-label); }
+.font-hand { font-family: var(--font-hand); }
+.font-hand-alt { font-family: var(--font-hand-alt); }
+.font-marker { font-family: var(--font-marker); }
+
+.text-giant {
+  font-family: var(--font-marker);
+  font-weight: 400;
+  font-size: clamp(3rem, 7vw, 5.5rem);
+  line-height: 1.05;
+  letter-spacing: 0.01em;
+}
+
+.text-huge {
+  font-family: var(--font-marker);
+  font-weight: 400;
+  font-size: clamp(2rem, 4.5vw, 3.5rem);
+  line-height: 1.15;
+  letter-spacing: 0.01em;
+}
+
+.text-large {
+  font-family: var(--font-marker);
+  font-weight: 400;
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
+  line-height: 1.25;
+}
+
+.text-body-lg {
+  font-family: var(--font-hand-alt);
+  font-size: 1.2rem;
+  line-height: 1.6;
+  font-weight: 400;
+}
+
+.text-body {
+  font-family: var(--font-hand-alt);
+  font-size: 1.05rem;
+  line-height: 1.6;
+  font-weight: 400;
+}
+
+.on-surface-variant { color: var(--on-surface-variant); }
+
+/* ============================================
+   MARKER STROKES
+   ============================================ */
+.marker-underline {
+  position: relative;
+  display: inline-block;
+}
+.marker-underline::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  border-radius: 20% 80% 20% 80%;
+  opacity: 0.6;
+}
+.marker-underline--primary::after { background: var(--primary); }
+.marker-underline--secondary::after { background: var(--secondary); }
+.marker-underline--tertiary::after { background: var(--tertiary-container); }
+
+/* Hand-drawn SVG marker stroke */
+.marker-stroke {
+  display: block;
+  margin: 0 auto;
+}
+
+/* ============================================
+   STICKY NOTES
+   ============================================ */
+.sticky {
+  padding: 1.5rem;
+  position: relative;
+  box-shadow: 4px 8px 16px rgba(0,0,0,0.05);
+  transition: transform 0.3s ease;
+}
+.sticky:hover { transform: rotate(0deg) scale(1.03) !important; }
+
+.sticky--yellow { background: var(--tertiary-container); color: var(--on-tertiary-container); }
+.sticky--blue { background: var(--primary-container); color: var(--on-primary-container); }
+.sticky--red { background: var(--secondary-container); color: var(--on-secondary-container); }
+.sticky--white {
+  background: var(--bg-white);
+  color: var(--on-surface);
+  box-shadow: 0 8px 24px rgba(45,47,46,0.08);
+}
+
+/* Tape on sticky top */
+.sticky-tape {
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 48px;
+  height: 16px;
+  background: rgba(172,173,172,0.3);
+  border-radius: 1px;
+}
+
+.sticky-tape--offset {
+  left: 30%;
+  transform: translateX(-50%) rotate(2deg);
+}
+
+/* ============================================
+   LABEL CHIPS
+   ============================================ */
+.chip {
+  display: inline-block;
+  padding: 0.35rem 0.9rem;
+  font-family: var(--font-hand-alt);
+  font-size: 0.95rem;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+.chip--primary { background: var(--primary); color: var(--on-primary); }
+.chip--secondary { background: var(--secondary); color: var(--on-secondary); }
+.chip--tertiary { background: var(--tertiary-container); color: var(--on-tertiary-container); }
+
+/* ============================================
+   STAT CARDS
+   ============================================ */
+.stat-number {
+  font-family: var(--font-marker);
+  font-weight: 400;
+  line-height: 1;
+}
+
+.stat-label {
+  font-family: var(--font-hand-alt);
+  font-size: 0.9rem;
+  font-weight: 400;
+  margin-top: 0.5rem;
+  opacity: 0.7;
+}
+
+/* ============================================
+   PROTOTYPE CARDS
+   ============================================ */
+.proto-card {
+  background: var(--bg-white);
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(45,47,46,0.08);
+  transition: transform 0.3s ease;
+}
+.proto-card:hover { transform: translateY(-4px) rotate(0deg) !important; }
+
+.proto-card-img {
+  width: 100%;
+  height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.proto-card-body { padding: 1.25rem; }
+
+.proto-card-title {
+  font-family: var(--font-marker);
+  font-weight: 400;
+  font-size: 1.05rem;
+  margin-bottom: 0.4rem;
+}
+
+.proto-card-desc {
+  font-family: var(--font-hand-clean);
+  font-size: 0.88rem;
+  color: var(--on-surface-variant);
+  line-height: 1.6;
+  font-weight: 300;
+}
+
+.proto-card-team {
+  font-family: var(--font-hand-alt);
+  font-size: 0.8rem;
+  font-weight: 400;
+  margin-top: 0.75rem;
+  opacity: 0.6;
+}
+
+/* ============================================
+   TIMELINE
+   ============================================ */
+.timeline {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  width: 100%;
+}
+
+.timeline-card {
+  position: relative;
+  padding: 1.5rem;
+  border-top: 4px solid var(--outline-variant);
+  transition: all 0.3s ease;
+}
+
+.timeline-card:hover { border-top-color: var(--primary); }
+
+.timeline-num {
+  font-family: var(--font-marker);
+  font-weight: 400;
+  font-size: 3rem;
+  opacity: 0.08;
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  line-height: 1;
+}
+
+.timeline-card--highlight {
+  border-top-color: var(--primary);
+  background: var(--primary-container);
+  color: var(--on-primary-container);
+}
+.timeline-card--highlight .timeline-num { opacity: 0.12; }
+
+/* ============================================
+   AGENDA
+   ============================================ */
+.agenda-item {
+  display: flex;
+  gap: 1.25rem;
+  align-items: flex-start;
+}
+
+.agenda-time {
+  font-family: var(--font-marker);
+  font-weight: 400;
+  font-size: 0.95rem;
+  min-width: 70px;
+  color: var(--primary);
+}
+
+.agenda-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--primary);
+  flex-shrink: 0;
+  margin-top: 5px;
+  position: relative;
+}
+.agenda-dot::after {
+  content: '';
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  height: 36px;
+  background: var(--outline-variant);
+}
+.agenda-item:last-child .agenda-dot::after { display: none; }
+
+.agenda-title {
+  font-family: var(--font-marker);
+  font-weight: 400;
+  font-size: 1rem;
+  margin-bottom: 0.2rem;
+}
+
+.agenda-desc {
+  font-family: var(--font-hand-clean);
+  font-size: 0.88rem;
+  color: var(--on-surface-variant);
+  font-weight: 300;
+}
+
+.agenda-content { padding-bottom: 1.25rem; }
+
+/* ============================================
+   TAKEAWAY CARDS
+   ============================================ */
+.takeaway-card {
+  padding: 1.75rem;
+  border-left: 4px solid;
+  background: var(--bg-white);
+  box-shadow: 0 4px 16px rgba(45,47,46,0.06);
+}
+
+/* ============================================
+   DECORATIVE
+   ============================================ */
+.doodle-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  opacity: 0.08;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.scribble-circle {
+  border: 2.5px solid var(--secondary);
+  border-radius: 48% 52% 45% 55% / 54% 46% 54% 46%;
+  padding: 1.5rem 2rem;
+  display: inline-block;
+}
+
+/* ============================================
+   GRID & LAYOUT UTILS
+   ============================================ */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; }
+.flex-col { display: flex; flex-direction: column; }
+.gap-2 { gap: 1rem; }
+.gap-3 { gap: 1.5rem; }
+.text-center { text-align: center; }
+.mb-1 { margin-bottom: 0.5rem; }
+.mb-2 { margin-bottom: 1rem; }
+.mb-3 { margin-bottom: 1.5rem; }
+.mb-4 { margin-bottom: 2rem; }
+.mb-6 { margin-bottom: 3rem; }
+.mt-2 { margin-top: 1rem; }
+.mt-3 { margin-top: 1.5rem; }
+.mt-4 { margin-top: 2rem; }
+
+/* ============================================
+   ANIMATION CLASSES
+   ============================================ */
+.anim-fade-rise {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.anim-scale-pop {
+  opacity: 0;
+  transform: scale(0.85);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.anim-slide-left {
+  opacity: 0;
+  transform: translateX(-40px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.anim-slide-right {
+  opacity: 0;
+  transform: translateX(40px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.anim-sticky-drop {
+  opacity: 0;
+  transform: translateY(-20px) rotate(-2deg);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.anim-fade {
+  opacity: 0;
+  transition: opacity 0.7s ease;
+}
+
+.anim-active.anim-fade-rise,
+.anim-active.anim-scale-pop,
+.anim-active.anim-slide-left,
+.anim-active.anim-slide-right,
+.anim-active.anim-sticky-drop,
+.anim-active.anim-fade {
+  opacity: 1;
+  transform: translateY(0) translateX(0) scale(1) rotate(0deg);
+}
+
+/* ============================================
+   PROGRESS BAR
+   ============================================ */
+.progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--primary), var(--primary-container));
+  z-index: 9997;
+  transition: width 0.3s ease;
+}
+
+/* ============================================
+   NAV DOTS
+   ============================================ */
+.nav-dots {
+  position: fixed;
+  right: 1.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  z-index: 9996;
+}
+.nav-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid var(--outline-variant);
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 0;
+}
+.nav-dot.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  transform: scale(1.3);
+}
+.nav-dot[data-group-start] { margin-top: 8px; }
+body.dark-mode-dots .nav-dot { border-color: rgba(255,255,255,0.3); }
+body.dark-mode-dots .nav-dot.active { background: var(--primary-container); border-color: var(--primary-container); }
+
+/* ============================================
+   SPEAKER NOTES
+   ============================================ */
+.speaker-notes {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(13,15,14,0.95);
+  color: #f6f6f4;
+  padding: 1.5rem 3rem;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  z-index: 9995;
+  transform: translateY(100%);
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  max-height: 30vh;
+  overflow-y: auto;
+  backdrop-filter: blur(20px);
+}
+.speaker-notes.visible { transform: translateY(0); }
+.speaker-notes-label {
+  font-family: var(--font-label);
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--primary-container);
+  margin-bottom: 0.5rem;
+}
+
+/* ============================================
+   SLIDE COUNTER
+   ============================================ */
+.slide-counter {
+  position: fixed;
+  bottom: 1.5rem;
+  left: 1.5rem;
+  font-family: var(--font-label);
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--outline);
+  z-index: 9990;
+  letter-spacing: 0.05em;
+}
+
+/* ============================================
+   LOADING SCREEN
+   ============================================ */
+.loading-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  transition: opacity 0.8s ease, visibility 0.8s ease;
+}
+.loading-screen.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+.loading-line {
+  font-family: var(--font-marker);
+  font-weight: 400;
+  font-size: clamp(1.8rem, 4vw, 3rem);
+  color: var(--on-surface);
+  text-align: center;
+  line-height: 1.4;
+  opacity: 0;
+  transform: translateY(12px);
+  animation: loadFadeIn 0.6s ease forwards;
+}
+.loading-line:nth-child(1) { animation-delay: 0.3s; }
+.loading-line:nth-child(2) { animation-delay: 1.2s; }
+.loading-line:nth-child(3) { animation-delay: 2.1s; color: var(--primary); }
+.loading-prompt {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--outline);
+  margin-top: 3rem;
+  opacity: 0;
+  animation: loadFadeIn 0.5s ease 3.2s forwards;
+}
+@keyframes loadFadeIn { to { opacity: 1; transform: translateY(0); } }
+
+/* ============================================
+   BIG QUOTE
+   ============================================ */
+.big-quote {
+  position: relative;
+  padding-left: 2rem;
+}
+.big-quote::before {
+  content: '\201C';
+  font-family: var(--font-marker);
+  font-weight: 400;
+  font-size: 8rem;
+  color: var(--primary-container);
+  opacity: 0.3;
+  position: absolute;
+  top: -2.5rem;
+  left: -1.5rem;
+  line-height: 1;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 900px) {
+  .page { padding: 2rem 1.5rem; }
+  .grid-2, .grid-3, .grid-4, .timeline { grid-template-columns: 1fr; }
+  .nav-dots { display: none; }
+  .board-pens { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ==========================================
+     LOADING SCREEN
+     ========================================== -->
+<div class="loading-screen" id="loadingScreen">
+  <div class="loading-line">This is what happens</div>
+  <div class="loading-line">when you give your people</div>
+  <div class="loading-line">the tools to build.</div>
+  <div class="loading-prompt">Press any key or scroll to begin</div>
+</div>
+
+<!-- Progress Bar -->
+<div class="progress-bar" id="progressBar" style="width: 0%"></div>
+
+<!-- Nav Dots -->
+<nav class="nav-dots" id="navDots"></nav>
+
+<!-- Slide Counter -->
+<div class="slide-counter" id="slideCounter">1 / 11</div>
+
+
+<!-- ==========================================
+     SLIDE 1 — TITLE (Whiteboard Canvas)
+     ========================================== -->
+<section class="page page--board" id="page-0" data-group="hook"
+  data-notes="Welcome everyone. We're here to kick off something we're genuinely excited about — an AI programme designed specifically for Private Banking. This isn't a training course. It's a hands-on journey that ends with you building real AI tools that solve real problems in your world.">
+
+  <!-- Whiteboard furniture -->
+  <div class="board-magnet" style="top:16px;left:16px"></div>
+  <div class="board-magnet" style="top:16px;right:16px"></div>
+  <div class="board-magnet" style="bottom:16px;left:16px"></div>
+  <div class="board-magnet" style="bottom:16px;right:16px"></div>
+
+  <!-- Tape strips -->
+  <div class="board-tape" style="top:0;left:15%;transform:rotate(-3deg);"></div>
+  <div class="board-tape" style="top:0;right:12%;transform:rotate(2deg);"></div>
+
+  <!-- Pens & Eraser -->
+  <div class="board-pens">
+    <div class="pen pen--blue" style="transform:rotate(-15deg)">
+      <div class="pen-body"></div>
+      <div class="pen-cap"><div class="pen-cap-dot"></div></div>
+    </div>
+    <div class="pen pen--red" style="transform:rotate(5deg)">
+      <div class="pen-body"></div>
+      <div class="pen-cap"><div class="pen-cap-dot"></div></div>
+    </div>
+    <div class="pen pen--yellow" style="transform:rotate(-8deg)">
+      <div class="pen-body"></div>
+      <div class="pen-cap"><div class="pen-cap-dot"></div></div>
+    </div>
+    <div class="board-eraser">
+      <div class="eraser-top"><div class="eraser-top-inner"></div></div>
+      <div class="eraser-felt"></div>
+    </div>
+  </div>
+
+  <!-- Decorative blobs -->
+  <div class="doodle-blob" style="width:300px;height:300px;background:var(--primary);top:8%;right:10%"></div>
+  <div class="doodle-blob" style="width:200px;height:200px;background:var(--secondary);bottom:20%;left:5%"></div>
+
+  <div class="page-inner text-center">
+    <div class="anim-fade-rise">
+      <span class="chip chip--primary mb-3" style="transform:rotate(-2deg)">Private Banking</span>
+    </div>
+
+    <div class="anim-fade-rise" data-delay="0.2">
+      <h1 class="text-giant mb-3" style="transform:rotate(-1deg)">
+        AI Hackathon:<br/>
+        <span style="color:var(--primary)">Build the Future</span>
+      </h1>
+    </div>
+
+    <div class="anim-fade-rise" data-delay="0.4">
+      <svg class="marker-stroke" viewBox="0 0 400 20" width="320" height="16">
+        <path d="M5 15 Q100 5 200 15 T395 10" fill="none" stroke="var(--secondary)" stroke-width="4" stroke-linecap="round" opacity="0.5"/>
+      </svg>
+    </div>
+
+    <div class="anim-fade-rise" data-delay="0.6">
+      <p class="text-body-lg on-surface-variant mt-3" style="max-width:550px;margin-left:auto;margin-right:auto">
+        We stopped talking about AI and started building with it.<br/>
+        <strong>Now it's your turn.</strong>
+      </p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ==========================================
+     SLIDE 2 — THE OPENING QUESTION
+     ========================================== -->
+<section class="page page--white" id="page-1" data-group="hook"
+  data-notes="Read this slowly. Let it land. This is the question that started everything for us. Every organisation has people who understand the problems deeply — they're closest to the work, they see what needs fixing. And there are people who can build solutions. The gap between them is where good ideas go to die. AI changes that.">
+
+  <div class="page-inner page-inner--narrow text-center">
+    <div class="anim-fade-rise">
+      <span class="chip chip--secondary mb-4" style="transform:rotate(-1deg)">Act One</span>
+    </div>
+
+    <div class="anim-fade-rise" data-delay="0.3">
+      <h2 style="font-family:var(--font-headline);font-weight:900;font-size:clamp(2rem,5vw,3.5rem);line-height:1.15;letter-spacing:-0.02em">
+        What if your best ideas are trapped inside people who
+        <span class="marker-underline marker-underline--secondary" style="display:inline"><em>can't build them?</em></span>
+      </h2>
+    </div>
+
+    <div class="anim-fade-rise" data-delay="0.6">
+      <div class="grid-2 mt-4" style="max-width:700px;margin-left:auto;margin-right:auto">
+        <div class="sticky sticky--red" style="transform:rotate(-1.5deg);padding:1.75rem">
+          <div class="sticky-tape"></div>
+          <p style="font-size:1rem;font-weight:500;line-height:1.5">People who <strong>understand the problems</strong> — the ones closest to the work, who see exactly what needs improving.</p>
+        </div>
+        <div class="sticky sticky--blue" style="transform:rotate(1.5deg);padding:1.75rem">
+          <div class="sticky-tape"></div>
+          <p style="font-size:1rem;font-weight:500;line-height:1.5">People who <strong>can build solutions</strong> — the developers, the engineers, the technical teams.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="anim-fade-rise" data-delay="0.9">
+      <p class="on-surface-variant mt-4 text-body-lg" style="max-width:600px;margin-left:auto;margin-right:auto">
+        Both sides want the same thing. But demand for change always outpaces capacity — and <em>that's</em> the gap. <strong>AI closes it.</strong>
+      </p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ==========================================
+     SLIDE 3 — THE PAIN POINT [PLACEHOLDER]
+     ========================================== -->
+<section class="page page--board" id="page-2" data-group="hook"
+  data-notes="[GET FROM PB REP] This slide needs a real stat or pain point from Private Banking. Something specific — hours spent on manual processes, client experience gaps, compliance bottlenecks. The more specific and recognisable, the better. It grounds the whole programme in THEIR reality.">
+
+  <!-- Board furniture -->
+  <div class="board-magnet" style="top:16px;left:16px"></div>
+  <div class="board-magnet" style="top:16px;right:16px"></div>
+  <div class="board-magnet" style="bottom:16px;left:16px"></div>
+  <div class="board-magnet" style="bottom:16px;right:16px"></div>
+  <div class="board-tape" style="top:0;left:40%;transform:rotate(-1deg)"></div>
+
+  <div class="page-inner text-center">
+    <div class="anim-fade-rise">
+      <span class="chip chip--tertiary mb-3" style="transform:rotate(-1deg)">Your World</span>
+    </div>
+
+    <div class="anim-scale-pop" data-delay="0.3">
+      <div class="scribble-circle mb-4">
+        <div class="stat-number" style="color:var(--secondary);font-size:4.5rem">?</div>
+      </div>
+    </div>
+
+    <div class="anim-fade-rise" data-delay="0.5">
+      <h2 class="text-large mb-3" style="max-width:700px;margin:0 auto">
+        [Placeholder — specific Private Banking pain point from the rep]
+      </h2>
+    </div>
+
+    <div class="anim-fade-rise" data-delay="0.7">
+      <p class="on-surface-variant text-body-lg" style="max-width:550px;margin:0 auto">
+        What if your team could solve this — in a single day — using AI tools they've learned to wield in just 3 hours of training?
+      </p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ==========================================
+     SLIDE 4 — WE'VE DONE THIS BEFORE (Proof)
+     ========================================== -->
+<section class="page page--white" id="page-3" data-group="proof"
+  data-notes="This is social proof. We ran this exact format with our team — Planning and Productivity. Mixed grades, mixed abilities, people who had never coded a line in their lives. In under two hours, the facilitators had built working prototypes. Then we gave the tools to twenty colleagues. Three teams formed around real problems. Zero professional developers. Every single team delivered a working demo by end of day. Not mockups. Not slide decks. Working software.">
+
+  <div class="page-inner">
+    <div class="anim-fade-rise">
+      <span class="chip chip--primary mb-2" style="transform:rotate(-1deg)">Proven</span>
+    </div>
+
+    <div class="anim-fade-rise" data-delay="0.2">
+      <h2 class="text-huge mb-3" style="transform:rotate(-0.5deg)">
+        We've already <span class="marker-underline marker-underline--primary">done this.</span>
+      </h2>
+    </div>
+
+    <div class="anim-fade-rise" data-delay="0.3">
+      <p class="on-surface-variant text-body-lg mb-4" style="max-width:700px">
+        We ran this exact programme with our wider team. Mixed grades, mixed abilities — from analysts to senior managers. People who had <strong>never written a line of code</strong> built working AI prototypes in hours.
+      </p>
+    </div>
+
+    <!-- Stats row -->
+    <div class="grid-4 mb-6">
+      <div class="anim-scale-pop" data-delay="0.5">
+        <div class="sticky sticky--yellow text-center" style="transform:rotate(-2deg);padding:1.5rem">
+          <div class="sticky-tape"></div>
+          <div class="stat-number" style="font-size:3rem">20</div>
+          <div class="stat-label">Colleagues</div>
+        </div>
+      </div>
+      <div class="anim-scale-pop" data-delay="0.6">
+        <div class="sticky sticky--blue text-center" style="transform:rotate(1deg);padding:1.5rem">
+          <div class="sticky-tape"></div>
+          <div class="stat-number" style="font-size:3rem">3</div>
+          <div class="stat-label">Teams</div>
+        </div>
+      </div>
+      <div class="anim-scale-pop" data-delay="0.7">
+        <div class="sticky sticky--red text-center" style="transform:rotate(-1deg);padding:1.5rem">
+          <div class="sticky-tape"></div>
+          <div class="stat-number" style="font-size:3rem">0</div>
+          <div class="stat-label">Developers</div>
+        </div>
+      </div>
+      <div class="anim-scale-pop" data-delay="0.8">
+        <div class="sticky sticky--yellow text-center" style="transform:rotate(2deg);padding:1.5rem">
+          <div class="sticky-tape"></div>
+          <div class="stat-number" style="font-size:3rem">3</div>
+          <div class="stat-label">Working Prototypes</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quote -->
+    <div class="anim-fade-rise" data-delay="1.0">
+      <div class="big-quote" style="max-width:700px">
+        <p style="font-size:1.15rem;font-style:italic;line-height:1.6;color:var(--on-surface)">
+          Completely eye-opening to see what can be achieved in such a short amount of time.
+        </p>
+        <p class="on-surface-variant mt-2" style="font-size:0.85rem">— Hackathon participant</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ==========================================
+     SLIDE 5 — WHAT THEY BUILT
+     ========================================== -->
+<section class="page page--board" id="page-4" data-group="proof"
+  data-notes="Walk through the three prototypes. Team 1 built an AI Performance Coach for contact centre managers. This one went to Dragons' Den and secured a hundred and ninety thousand pounds of funding to build a full production version. Let that land — a hackathon prototype, built by non-technical people, is now being productionised. Team 2 built a Change Management Tracker. Team 3 built a Service Resourcing Tool. Not mockups. Working software. And they didn't stop — on their own time, they kept building personal projects because they wanted to.">
+
+  <div class="board-magnet" style="top:16px;left:16px"></div>
+  <div class="board-magnet" style="top:16px;right:16px"></div>
+  <div class="board-magnet" style="bottom:16px;left:16px"></div>
+  <div class="board-magnet" style="bottom:16px;right:16px"></div>
+
+  <div class="board-pens">
+    <div class="pen pen--blue" style="transform:rotate(-12deg)">
+      <div class="pen-body"></div>
+      <div class="pen-cap"><div class="pen-cap-dot"></div></div>
+    </div>
+    <div class="pen pen--red" style="transform:rotate(8deg)">
+      <div class="pen-body"></div>
+      <div class="pen-cap"><div class="pen-cap-dot"></div></div>
+    </div>
+    <div class="board-eraser">
+      <div class="eraser-top"><div class="eraser-top-inner"></div></div>
+      <div class="eraser-felt"></div>
+    </div>
+  </div>
+
+  <div class="page-inner">
+    <div class="anim-fade-rise">
+      <h2 class="text-huge mb-2" style="transform:rotate(-0.5deg)">
+        People just like you <span class="marker-underline marker-underline--tertiary">built these.</span>
+      </h2>
+    </div>
+
+    <div class="anim-fade-rise" data-delay="0.2">
+      <p class="on-surface-variant mb-4">Not mockups. Not slide decks. <strong>Working software.</strong> Built by people with zero development experience.</p>
+    </div>
+
+    <div class="grid-3 mb-4">
+      <div class="anim-sticky-drop" data-delay="0.4">
+        <div class="proto-card" style="transform:rotate(-1deg)">
+          <div class="proto-card-img" style="background:#f0f0f0">
+            <img src="Screenshot 2026-02-18 132923.png" alt="AI Performance Coach Dashboard" style="width:100%;height:100%;object-fit:cover;object-position:top">
+          </div>
+          <div class="proto-card-body">
+            <div class="proto-card-title">AI Performance Coach</div>
+            <div class="proto-card-desc">Helps managers understand their team and get personalised coaching recommendations. Presented at Dragons' Den — <strong style="color:var(--primary)">secured £190k funding</strong> to build a full production version.</div>
+            <div class="proto-card-team">Team 1 · Now in production development</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="anim-sticky-drop" data-delay="0.6">
+        <div class="proto-card" style="transform:rotate(1deg)">
+          <div class="proto-card-img" style="background:#f0f0f0">
+            <img src="IMG_1167.jpg" alt="Change Management Tracker" style="width:100%;height:100%;object-fit:cover;object-position:top">
+          </div>
+          <div class="proto-card-body">
+            <div class="proto-card-title">Change Management Tracker</div>
+            <div class="proto-card-desc">Tracks all change across the organisation — timelines, impacts, dependencies. A real problem that needed solving.</div>
+            <div class="proto-card-team">Team 2</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="anim-sticky-drop" data-delay="0.8">
+        <div class="proto-card" style="transform:rotate(-0.5deg)">
+          <div class="proto-card-img" style="background:#f0f0f0">
+            <img src="Screenshot 2026-02-18 133135.png" alt="Service Resourcing Tool" style="width:100%;height:100%;object-fit:cover;object-position:top">
+          </div>
+          <div class="proto-card-body">
+            <div class="proto-card-title">Service Resourcing Tool</div>
+            <div class="proto-card-desc">A smarter way to allocate people across teams. Real problem, real working solution. Built in one afternoon.</div>
+            <div class="proto-card-team">Team 3</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="anim-fade-rise" data-delay="1.0">
+      <div class="sticky sticky--yellow" style="transform:rotate(1deg);max-width:500px;margin:0 auto;text-align:center;padding:1.25rem 1.5rem">
+        <div class="sticky-tape"></div>
+        <p style="font-size:0.95rem;font-weight:600">
+          After the hackathon, they didn't stop. On their own time, they kept building — a golf app, a darts game, a Premier League predictor. <em>Because they wanted to.</em>
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ==========================================
+     SLIDE 6 — UGLY BABY (Catmull Quote)
+     ========================================== -->
+<section class="page page--white" id="page-5" data-group="proof"
+  data-notes="This is an important reframe. Ed Catmull, co-founder of Pixar, said every great film started as an ugly baby — a terrible first draft that needed protecting until it grew into something great. Our hackathon prototypes are ugly babies. And that's exactly what they should be. The AI Performance Coach started as one of those ugly babies — and it just got a hundred and ninety thousand pounds to become a real product. That's the power of prototyping.">
+
+  <div class="page-inner page-inner--narrow text-center">
+    <div class="anim-fade-rise">
+      <div class="big-quote" style="text-align:left;max-width:650px;margin:0 auto">
+        <p style="font-family:var(--font-headline);font-weight:700;font-size:clamp(1.3rem,2.5vw,1.8rem);line-height:1.5;font-style:italic;color:var(--on-surface)">
+          Every great film started as an 'ugly baby' — a terrible first draft that needed to be protected until it grew into something great.
+        </p>
+        <p class="on-surface-variant mt-3" style="font-size:0.9rem;font-style:normal">
+          — <strong>Ed Catmull</strong>, co-founder of Pixar
+        </p>
+      </div>
+    </div>
+
+    <div class="anim-fade-rise" data-delay="0.5">
+      <div style="max-width:550px;margin:2.5rem auto 0;padding:1.5rem 2rem;border:2px dashed var(--outline-variant);border-radius:48% 52% 45% 55% / 54% 46% 54% 46%">
+        <p style="font-size:1.1rem;line-height:1.6;color:var(--on-surface)">
+          Our hackathon prototypes are <strong>ugly babies</strong>. And that's exactly what they should be.
+        </p>
+        <p class="on-surface-variant mt-2" style="font-size:0.9rem">
+          The AI Performance Coach started as one. It just secured <strong style="color:var(--primary)">£190k in funding</strong>.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ==========================================
+     SLIDE 7 — THE 4-WEEK PROGRAMME
+     ========================================== -->
+<section class="page page--primary" id="page-6" data-group="programme"
+  data-notes="This is the programme structure. Three one-hour virtual sessions then the hackathon day. Session 1 covers the basics of AI — what LLMs and agents are, how they work, where they fit in banking. Session 2 is about planning using AI — how to think with it, prompt effectively, use it as a planning tool. Session 3 is about developing your business problems — identifying the real PB pain points you'll solve on hackathon day, forming teams, scoping projects. Week 4 is the hackathon itself, 10am to 4pm.">
+
+  <div class="page-inner">
+    <div class="anim-fade-rise">
+      <span class="chip mb-2" style="background:rgba(255,255,255,0.2);color:white;transform:rotate(-1deg)">The Programme</span>
+    </div>
+
+    <div class="anim-fade-rise" data-delay="0.2">
+      <h2 class="text-huge mb-2">Your 4-Week Journey</h2>
+    </div>
+
+    <div class="anim-fade-rise" data-delay="0.3">
+      <p style="opacity:0.8;max-width:600px;margin-bottom:2rem">3 weeks of training. 1 day of building. The same proven model, tailored for Private Banking.</p>
+    </div>
+
+    <div class="timeline">
+      <div class="anim-fade-rise" data-delay="0.4">
+        <div class="timeline-card" style="border-top-color:rgba(255,255,255,0.4)">
+          <div class="timeline-num" style="color:rgba(255,255,255,0.12)">1</div>
+          <div class="chip mb-2" style="background:rgba(255,255,255,0.15);color:white;font-size:0.6rem">Week 1 · Virtual · 1hr</div>
+          <h3 class="font-headline" style="font-weight:400;font-size:1.05rem;margin-bottom:0.5rem">Basics of AI</h3>
+          <p style="font-family:var(--font-hand-clean);font-size:0.88rem;opacity:0.8;line-height:1.6">What AI, LLMs and agents actually are. How they work, what they can do, and where they fit in Private Banking.</p>
+        </div>
+      </div>
+
+      <div class="anim-fade-rise" data-delay="0.6">
+        <div class="timeline-card" style="border-top-color:rgba(255,255,255,0.4)">
+          <div class="timeline-num" style="color:rgba(255,255,255,0.12)">2</div>
+          <div class="chip mb-2" style="background:rgba(255,255,255,0.15);color:white;font-size:0.6rem">Week 2 · Virtual · 1hr</div>
+          <h3 class="font-headline" style="font-weight:400;font-size:1.05rem;margin-bottom:0.5rem">Planning Using AI</h3>
+          <p style="font-family:var(--font-hand-clean);font-size:0.88rem;opacity:0.8;line-height:1.6">How to think with AI. Prompting techniques, planning approaches, and using AI as a thinking partner for real work.</p>
+        </div>
+      </div>
+
+      <div class="anim-fade-rise" data-delay="0.8">
+        <div class="timeline-card" style="border-top-color:rgba(255,255,255,0.4)">
+          <div class="timeline-num" style="color:rgba(255,255,255,0.12)">3</div>
+          <div class="chip mb-2" style="background:rgba(255,255,255,0.15);color:white;font-size:0.6rem">Week 3 · Virtual · 1hr</div>
+          <h3 class="font-headline" style="font-weight:400;font-size:1.05rem;margin-bottom:0.5rem">Developing Your Business Problems</h3>
+          <p style="font-family:var(--font-hand-clean);font-size:0.88rem;opacity:0.8;line-height:1.6">Identify and refine the real PB problems you'll solve. Form teams. Scope your hackathon project. Hit the ground running.</p>
+        </div>
+      </div>
+
+      <div class="anim-fade-rise" data-delay="1.0">
+        <div class="timeline-card timeline-card--highlight">
+          <div class="timeline-num">4</div>
+          <div class="chip mb-2" style="background:rgba(0,34,74,0.3);color:white;font-size:0.6rem">Week 4 · 10am–4pm</div>
+          <h3 class="font-headline" style="font-weight:400;font-size:1.05rem;margin-bottom:0.5rem">Hackathon Day</h3>
+          <p style="font-size:0.82rem;opacity:0.9;line-height:1.5">Build. Demo. Judge. Turn your idea into a working prototype that solves a real Private Banking problem.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ==========================================
+     SLIDE 7 — HACKATHON DAY AGENDA
+     ========================================== -->
+<section class="page page--board" id="page-7" data-group="programme"
+  data-notes="The hackathon day runs 10am to 4pm. Quick kickoff, then straight into building. Facilitators on hand throughout. Lunch break with a lightning talk. Afternoon polish. Demos and judging from 3pm — 3 minutes to pitch, 2 minutes Q&A per team. Awards and close at 4. The format is proven — we ran the same structure and every team delivered a working demo.">
+
+  <div class="board-magnet" style="top:16px;left:16px"></div>
+  <div class="board-magnet" style="top:16px;right:16px"></div>
+  <div class="board-magnet" style="bottom:16px;left:16px"></div>
+  <div class="board-magnet" style="bottom:16px;right:16px"></div>
+  <div class="board-tape" style="top:0;left:25%;transform:rotate(-2deg)"></div>
+  <div class="board-tape" style="top:0;right:20%;transform:rotate(3deg)"></div>
+
+  <div class="page-inner">
+    <div class="grid-2" style="align-items:start">
+      <!-- Left: Agenda -->
+      <div>
+        <div class="anim-fade-rise">
+          <span class="chip chip--primary mb-2" style="transform:rotate(-1deg)">Week 4</span>
+          <h2 class="text-huge mb-4" style="transform:rotate(-0.5deg)">The Day</h2>
+        </div>
+
+        <div class="flex-col">
+          <div class="anim-slide-left agenda-item" data-delay="0.3">
+            <div class="agenda-time">10:00</div>
+            <div class="agenda-dot"></div>
+            <div class="agenda-content">
+              <div class="agenda-title">Kickoff & Team Assembly</div>
+              <div class="agenda-desc">Welcome, ground rules, final team check</div>
+            </div>
+          </div>
+          <div class="anim-slide-left agenda-item" data-delay="0.4">
+            <div class="agenda-time">10:30</div>
+            <div class="agenda-dot" style="background:var(--tertiary-container)"></div>
+            <div class="agenda-content">
+              <div class="agenda-title">Build Sprint Begins</div>
+              <div class="agenda-desc">Teams build. Facilitators on hand throughout.</div>
+            </div>
+          </div>
+          <div class="anim-slide-left agenda-item" data-delay="0.5">
+            <div class="agenda-time">12:30</div>
+            <div class="agenda-dot" style="background:var(--outline-variant)"></div>
+            <div class="agenda-content">
+              <div class="agenda-title">Lunch & Lightning Talk</div>
+              <div class="agenda-desc">Refuel + a quick talk on AI in banking</div>
+            </div>
+          </div>
+          <div class="anim-slide-left agenda-item" data-delay="0.6">
+            <div class="agenda-time">13:15</div>
+            <div class="agenda-dot" style="background:var(--tertiary-container)"></div>
+            <div class="agenda-content">
+              <div class="agenda-title">Afternoon Sprint</div>
+              <div class="agenda-desc">Polish, refine, prepare your demo</div>
+            </div>
+          </div>
+          <div class="anim-slide-left agenda-item" data-delay="0.7">
+            <div class="agenda-time">15:00</div>
+            <div class="agenda-dot" style="background:var(--secondary)"></div>
+            <div class="agenda-content">
+              <div class="agenda-title">Demos & Judging</div>
+              <div class="agenda-desc">3 min pitch + 2 min Q&A per team</div>
+            </div>
+          </div>
+          <div class="anim-slide-left agenda-item" data-delay="0.8">
+            <div class="agenda-time">16:00</div>
+            <div class="agenda-dot" style="background:var(--primary)"></div>
+            <div class="agenda-content">
+              <div class="agenda-title">Awards & Close</div>
+              <div class="agenda-desc">Winners, celebration, what happens next</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Rules as stickies -->
+      <div class="flex-col gap-3" style="padding-top:3.5rem">
+        <div class="anim-sticky-drop" data-delay="0.5">
+          <div class="sticky sticky--yellow" style="transform:rotate(2deg);padding:1.25rem 1.5rem">
+            <div class="sticky-tape sticky-tape--offset"></div>
+            <h4 class="font-headline" style="font-weight:400;font-size:1rem;margin-bottom:0.4rem">
+              <span class="material-symbols-outlined" style="vertical-align:middle;margin-right:0.25rem;font-size:1.1rem">groups</span>
+              Teams of 5–7
+            </h4>
+            <p style="font-family:var(--font-hand-clean);font-size:0.88rem;line-height:1.6">Mixed grades & skills by design. Everyone contributes something unique.</p>
+          </div>
+        </div>
+
+        <div class="anim-sticky-drop" data-delay="0.7">
+          <div class="sticky sticky--blue" style="transform:rotate(-1.5deg);padding:1.25rem 1.5rem">
+            <div class="sticky-tape"></div>
+            <h4 class="font-headline" style="font-weight:400;font-size:1rem;margin-bottom:0.4rem">
+              <span class="material-symbols-outlined" style="vertical-align:middle;margin-right:0.25rem;font-size:1.1rem">code_off</span>
+              No Code Required
+            </h4>
+            <p style="font-family:var(--font-hand-clean);font-size:0.88rem;line-height:1.6">AI tools do the heavy lifting. Your ideas and domain expertise are the real ingredients.</p>
+          </div>
+        </div>
+
+        <div class="anim-sticky-drop" data-delay="0.9">
+          <div class="sticky sticky--red" style="transform:rotate(1deg);padding:1.25rem 1.5rem">
+            <div class="sticky-tape sticky-tape--offset"></div>
+            <h4 class="font-headline" style="font-weight:400;font-size:1rem;margin-bottom:0.4rem">
+              <span class="material-symbols-outlined" style="vertical-align:middle;margin-right:0.25rem;font-size:1.1rem">emoji_events</span>
+              Real Problems Only
+            </h4>
+            <p style="font-family:var(--font-hand-clean);font-size:0.88rem;line-height:1.6">Solve something that matters to Private Banking. The best ideas come from your daily work.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ==========================================
+     SLIDE 8 — WHY THIS MATTERS
+     ========================================== -->
+<section class="page page--dark" id="page-8" data-group="value"
+  data-notes="Here's the wider context. 73 percent of workers are already using AI weekly. But only 29 percent rate their own AI literacy as advanced. That gap is the opportunity — and the risk. A third of UK banks are already piloting AI agents that can take actions on their own. The organisations winning at AI aren't the ones buying it — they're the ones building with it. This programme gives your team that edge. It's not just about the hackathon — it's about lasting AI literacy, competitive advantage, and freeing up time to spend where it matters: with clients.">
+
+  <div class="page-inner">
+    <div class="anim-fade-rise text-center">
+      <span class="chip" style="background:var(--primary-container);color:var(--on-primary-container);transform:rotate(-1deg)">The Value</span>
+    </div>
+
+    <div class="anim-fade-rise text-center" data-delay="0.2">
+      <h2 class="text-huge mb-6" style="transform:rotate(-0.5deg)">
+        Why this matters for<br/>
+        <span style="color:var(--primary-container)">Private Banking</span>
+      </h2>
+    </div>
+
+    <!-- Stats -->
+    <div class="grid-2 mb-6" style="max-width:700px;margin-left:auto;margin-right:auto">
+      <div class="anim-scale-pop text-center" data-delay="0.4">
+        <div class="stat-number" style="font-size:4.5rem;color:var(--primary-container)">73%</div>
+        <p style="opacity:0.6;font-size:0.9rem;margin-top:0.5rem">of workers already use AI weekly</p>
+      </div>
+      <div class="anim-scale-pop text-center" data-delay="0.6">
+        <div class="stat-number" style="font-size:4.5rem;color:var(--tertiary-container)">29%</div>
+        <p style="opacity:0.6;font-size:0.9rem;margin-top:0.5rem">rate their AI literacy as advanced</p>
+      </div>
+    </div>
+
+    <div class="anim-fade-rise" data-delay="0.8">
+      <p class="text-center" style="font-size:1.15rem;opacity:0.8;max-width:600px;margin:0 auto 2rem">
+        That gap is the opportunity — and the risk.<br/>
+        <strong style="color:var(--primary-container)">The organisations winning at AI aren't buying it. They're building with it.</strong>
+      </p>
+    </div>
+
+    <div class="grid-3 mt-3" style="max-width:900px;margin-left:auto;margin-right:auto">
+      <div class="anim-fade-rise" data-delay="1.0">
+        <div style="padding:1.75rem;border:1px solid rgba(255,255,255,0.08);border-radius:4px">
+          <span class="material-symbols-outlined" style="font-size:2rem;color:var(--primary-container);margin-bottom:0.75rem;display:block">schedule</span>
+          <h3 class="font-headline" style="font-weight:400;font-size:1rem;margin-bottom:0.4rem">Free Up Time</h3>
+          <p style="font-family:var(--font-hand-clean);font-size:0.88rem;opacity:0.7;line-height:1.6">Automate the repetitive. Spend more time with clients, less time on admin.</p>
+        </div>
+      </div>
+      <div class="anim-fade-rise" data-delay="1.1">
+        <div style="padding:1.75rem;border:1px solid rgba(255,255,255,0.08);border-radius:4px">
+          <span class="material-symbols-outlined" style="font-size:2rem;color:var(--tertiary-container);margin-bottom:0.75rem;display:block">trending_up</span>
+          <h3 class="font-headline" style="font-weight:400;font-size:1rem;margin-bottom:0.4rem">Competitive Edge</h3>
+          <p style="font-family:var(--font-hand-clean);font-size:0.88rem;opacity:0.7;line-height:1.6">1/3 of UK banks already pilot autonomous AI agents. Be the team that leads.</p>
+        </div>
+      </div>
+      <div class="anim-fade-rise" data-delay="1.2">
+        <div style="padding:1.75rem;border:1px solid rgba(255,255,255,0.08);border-radius:4px">
+          <span class="material-symbols-outlined" style="font-size:2rem;color:var(--secondary-container);margin-bottom:0.75rem;display:block">psychology</span>
+          <h3 class="font-headline" style="font-weight:400;font-size:1rem;margin-bottom:0.4rem">Lasting AI Literacy</h3>
+          <p style="font-family:var(--font-hand-clean);font-size:0.88rem;opacity:0.7;line-height:1.6">Not just a hackathon — skills your team carries into every single day.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ==========================================
+     SLIDE 9 — WHAT YOU WALK AWAY WITH
+     ========================================== -->
+<section class="page page--board" id="page-9" data-group="value"
+  data-notes="Make this concrete. They're investing 3 hours of training plus a full day. Here's exactly what they get back. AI skills they can use immediately — not theory, practice. A working prototype — not a slide deck, actual software that solves a real PB problem. A network of AI-literate colleagues who've been through the same journey. And a story to tell — to their leaders, their clients, and their own careers. They didn't just learn about AI. They built with it.">
+
+  <div class="board-magnet" style="top:16px;left:16px"></div>
+  <div class="board-magnet" style="top:16px;right:16px"></div>
+  <div class="board-magnet" style="bottom:16px;left:16px"></div>
+  <div class="board-magnet" style="bottom:16px;right:16px"></div>
+
+  <div class="page-inner">
+    <div class="anim-fade-rise">
+      <h2 class="text-huge mb-6" style="transform:rotate(-0.5deg)">
+        What you'll <span class="marker-underline marker-underline--primary">walk away with</span>
+      </h2>
+    </div>
+
+    <div class="grid-2 gap-3">
+      <div class="anim-slide-left" data-delay="0.3">
+        <div class="takeaway-card" style="border-color:var(--primary)">
+          <span class="material-symbols-outlined" style="color:var(--primary);font-size:1.4rem;margin-bottom:0.75rem;display:block">build</span>
+          <h3 class="font-headline" style="font-weight:400;font-size:1.1rem;margin-bottom:0.4rem">AI Skills You Can Use Immediately</h3>
+          <p style="font-size:0.88rem;color:var(--on-surface-variant);line-height:1.6">Practical AI literacy — prompting, tool selection, knowing what's possible. Skills that apply to your work from day one.</p>
+        </div>
+      </div>
+
+      <div class="anim-slide-right" data-delay="0.4">
+        <div class="takeaway-card" style="border-color:var(--tertiary-container)">
+          <span class="material-symbols-outlined" style="color:var(--tertiary);font-size:1.4rem;margin-bottom:0.75rem;display:block">deployed_code</span>
+          <h3 class="font-headline" style="font-weight:400;font-size:1.1rem;margin-bottom:0.4rem">A Working Prototype</h3>
+          <p style="font-size:0.88rem;color:var(--on-surface-variant);line-height:1.6">Not a slide deck — actual AI-powered software that solves a real Private Banking problem. Built by your team, in one day.</p>
+        </div>
+      </div>
+
+      <div class="anim-slide-left" data-delay="0.5">
+        <div class="takeaway-card" style="border-color:var(--secondary)">
+          <span class="material-symbols-outlined" style="color:var(--secondary);font-size:1.4rem;margin-bottom:0.75rem;display:block">group_work</span>
+          <h3 class="font-headline" style="font-weight:400;font-size:1.1rem;margin-bottom:0.4rem">A Network of AI Champions</h3>
+          <p style="font-size:0.88rem;color:var(--on-surface-variant);line-height:1.6">Colleagues who've been through the same journey. People to bounce ideas off, collaborate with, and push forward together.</p>
+        </div>
+      </div>
+
+      <div class="anim-slide-right" data-delay="0.6">
+        <div class="takeaway-card" style="border-color:var(--primary-container)">
+          <span class="material-symbols-outlined" style="color:var(--primary-container);font-size:1.4rem;margin-bottom:0.75rem;display:block">campaign</span>
+          <h3 class="font-headline" style="font-weight:400;font-size:1.1rem;margin-bottom:0.4rem">A Story to Tell</h3>
+          <p style="font-size:0.88rem;color:var(--on-surface-variant);line-height:1.6">Evidence for your leaders, your clients, your career. You didn't just learn about AI — you built with it.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ==========================================
+     SLIDE 10 — YOUR MOVE (Close)
+     ========================================== -->
+<section class="page page--primary" id="page-10" data-group="close"
+  data-notes="Energy and excitement. This is the call to action. Remind them: 4 weeks from now, you'll have built something real. Not watched a webinar. Not read a whitepaper. Built it. Give them the homework — start thinking about the business problems they face every day. What's manual, what's frustrating, what takes too long. Bring their best problem to Session 3. That becomes their hackathon project. Share the dates once confirmed. Open for questions.">
+
+  <div class="page-inner text-center">
+    <div class="anim-scale-pop">
+      <h2 class="text-giant mb-4" style="transform:rotate(-1deg)">Your Move.</h2>
+    </div>
+
+    <div class="anim-fade-rise" data-delay="0.3">
+      <p class="text-body-lg mb-4" style="opacity:0.85;max-width:550px;margin-left:auto;margin-right:auto">
+        4 weeks from now, you'll have built something real with AI.<br/>
+        Not watched a webinar. Not read a whitepaper.<br/>
+        <strong>Built it.</strong>
+      </p>
+    </div>
+
+    <div class="anim-fade-rise" data-delay="0.5" style="margin:1.5rem auto;max-width:520px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem">
+        <!-- Dates -->
+        <div style="background:rgba(255,255,255,0.1);backdrop-filter:blur(10px);padding:1.5rem;border-radius:4px;border:1px solid rgba(255,255,255,0.12)">
+          <h3 class="font-headline" style="font-weight:400;font-size:0.95rem;margin-bottom:0.75rem">
+            <span class="material-symbols-outlined" style="font-size:1rem;vertical-align:middle;margin-right:0.25rem">calendar_month</span>
+            Key Dates
+          </h3>
+          <div style="text-align:left;font-size:0.85rem;line-height:2">
+            <div><strong>Session 1:</strong> [TBC]</div>
+            <div><strong>Session 2:</strong> [TBC]</div>
+            <div><strong>Session 3:</strong> [TBC]</div>
+            <div><strong>Hackathon:</strong> [TBC]</div>
+          </div>
+        </div>
+        <!-- Homework -->
+        <div style="background:rgba(253,212,0,0.15);backdrop-filter:blur(10px);padding:1.5rem;border-radius:4px;border:1px solid rgba(253,212,0,0.2)">
+          <h3 class="font-headline" style="font-weight:400;font-size:0.95rem;margin-bottom:0.75rem">
+            <span class="material-symbols-outlined" style="font-size:1rem;vertical-align:middle;margin-right:0.25rem">assignment</span>
+            Your Homework
+          </h3>
+          <p style="text-align:left;font-size:0.85rem;line-height:1.6;opacity:0.9">
+            Start thinking about the <strong>business problems</strong> you face every day. What's frustrating? What's manual? What takes too long?
+          </p>
+          <p style="text-align:left;font-size:0.85rem;line-height:1.6;opacity:0.7;margin-top:0.5rem">
+            Bring your best problem to Session 3. That's your hackathon fuel.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="anim-fade-rise" data-delay="0.7">
+      <p style="font-size:clamp(1.5rem,3vw,2.2rem);font-family:var(--font-headline);font-weight:900;margin-top:1.5rem">
+        What would <em>you</em> build?
+      </p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ==========================================
+     SPEAKER NOTES PANEL
+     ========================================== -->
+<div class="speaker-notes" id="speakerNotes">
+  <div class="speaker-notes-label">Speaker Notes — Press N to toggle</div>
+  <div id="speakerNotesContent"></div>
+</div>
+
+
+<!-- ==========================================
+     JAVASCRIPT
+     ========================================== -->
+<script>
+(function() {
+  'use strict';
+
+  // --- State ---
+  let currentPage = 0;
+  let notesVisible = false;
+  let loaded = false;
+  const pages = Array.from(document.querySelectorAll('.page'));
+  const totalPages = pages.length;
+  const progressBar = document.getElementById('progressBar');
+  const navDotsContainer = document.getElementById('navDots');
+  const slideCounter = document.getElementById('slideCounter');
+  const speakerNotesEl = document.getElementById('speakerNotes');
+  const speakerNotesContent = document.getElementById('speakerNotesContent');
+  const loadingScreen = document.getElementById('loadingScreen');
+
+  // --- Loading Screen ---
+  function dismissLoading() {
+    if (loaded) return;
+    loaded = true;
+    loadingScreen.classList.add('hidden');
+    animatePageIn(0);
+  }
+
+  document.addEventListener('keydown', function loadKey(e) {
+    if (!loaded) { e.preventDefault(); dismissLoading(); document.removeEventListener('keydown', loadKey); }
+  }, { once: false });
+
+  document.addEventListener('wheel', function loadWheel() {
+    if (!loaded) { dismissLoading(); }
+  }, { once: true });
+
+  document.addEventListener('touchstart', function loadTouch() {
+    if (!loaded) { dismissLoading(); }
+  }, { once: true });
+
+  // Auto-dismiss after 5s
+  setTimeout(dismissLoading, 5000);
+
+  // --- Build Nav Dots ---
+  function buildNavDots() {
+    let lastGroup = null;
+    pages.forEach((page, i) => {
+      const dot = document.createElement('button');
+      dot.className = 'nav-dot';
+      dot.setAttribute('aria-label', 'Go to slide ' + (i + 1));
+      const group = page.dataset.group;
+      if (group !== lastGroup && i > 0) dot.dataset.groupStart = 'true';
+      lastGroup = group;
+      dot.addEventListener('click', () => goToPage(i));
+      navDotsContainer.appendChild(dot);
+    });
+  }
+
+  // --- Update UI ---
+  function updateProgress() {
+    progressBar.style.width = ((currentPage + 1) / totalPages) * 100 + '%';
+  }
+
+  function updateNavDots() {
+    navDotsContainer.querySelectorAll('.nav-dot').forEach((d, i) => d.classList.toggle('active', i === currentPage));
+  }
+
+  function updateSlideCounter() {
+    slideCounter.textContent = (currentPage + 1) + ' / ' + totalPages;
+  }
+
+  function updateSpeakerNotes() {
+    speakerNotesContent.innerHTML = '<p>' + (pages[currentPage].dataset.notes || '') + '</p>';
+  }
+
+  function updateDotColors() {
+    const p = pages[currentPage];
+    document.body.classList.toggle('dark-mode-dots', p.classList.contains('page--dark') || p.classList.contains('page--primary'));
+  }
+
+  // --- Animations ---
+  function animatePageIn(idx) {
+    pages[idx].querySelectorAll('[class*="anim-"]').forEach(el => {
+      const delay = parseFloat(el.dataset.delay || 0) * 1000;
+      setTimeout(() => el.classList.add('anim-active'), delay);
+    });
+  }
+
+  function resetAnimations(idx) {
+    pages[idx].querySelectorAll('[class*="anim-"]').forEach(el => el.classList.remove('anim-active'));
+  }
+
+  // --- Navigation ---
+  function goToPage(index) {
+    if (index < 0 || index >= totalPages) return;
+    if (!loaded) dismissLoading();
+    if (index !== currentPage) resetAnimations(currentPage);
+    currentPage = index;
+    pages[currentPage].scrollIntoView({ behavior: 'smooth' });
+    updateProgress();
+    updateNavDots();
+    updateSlideCounter();
+    updateSpeakerNotes();
+    updateDotColors();
+    animatePageIn(currentPage);
+  }
+
+  function nextPage() { goToPage(currentPage + 1); }
+  function prevPage() { goToPage(currentPage - 1); }
+
+  function toggleSpeakerNotes() {
+    notesVisible = !notesVisible;
+    speakerNotesEl.classList.toggle('visible', notesVisible);
+  }
+
+  // --- Intersection Observer ---
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const idx = pages.indexOf(entry.target);
+        if (idx !== -1 && idx !== currentPage) {
+          currentPage = idx;
+          updateProgress();
+          updateNavDots();
+          updateSlideCounter();
+          updateSpeakerNotes();
+          updateDotColors();
+          animatePageIn(currentPage);
+        }
+      }
+    });
+  }, { threshold: 0.5 });
+  pages.forEach(page => observer.observe(page));
+
+  // --- Keyboard ---
+  document.addEventListener('keydown', (e) => {
+    if (!loaded) return;
+    switch(e.key) {
+      case 'ArrowDown': case 'ArrowRight': case ' ': case 'PageDown':
+        e.preventDefault(); nextPage(); break;
+      case 'ArrowUp': case 'ArrowLeft': case 'PageUp':
+        e.preventDefault(); prevPage(); break;
+      case 'Home': e.preventDefault(); goToPage(0); break;
+      case 'End': e.preventDefault(); goToPage(totalPages - 1); break;
+      case 'n': case 'N': toggleSpeakerNotes(); break;
+      default:
+        if (e.key >= '1' && e.key <= '9') {
+          const t = parseInt(e.key) - 1;
+          if (t < totalPages) { e.preventDefault(); goToPage(t); }
+        }
+    }
+  });
+
+  // --- GSAP ---
+  function setupGSAP() {
+    if (typeof gsap === 'undefined') return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Float blobs
+    document.querySelectorAll('.doodle-blob').forEach(blob => {
+      gsap.to(blob, {
+        y: '+=15', duration: 3 + Math.random() * 2,
+        repeat: -1, yoyo: true, ease: 'sine.inOut'
+      });
+    });
+
+    // Gentle pen hover
+    document.querySelectorAll('.pen').forEach(pen => {
+      gsap.to(pen, {
+        y: '+=3', duration: 2 + Math.random(),
+        repeat: -1, yoyo: true, ease: 'sine.inOut'
+      });
+    });
+  }
+
+  // --- Init ---
+  function init() {
+    buildNavDots();
+    updateProgress();
+    updateNavDots();
+    updateSlideCounter();
+    updateSpeakerNotes();
+    setupGSAP();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>
+</body>
+</html>
