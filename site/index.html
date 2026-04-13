@@ -568,6 +568,57 @@ body::before {
 }
 
 /* ============================================
+   USE CASE CARDS
+   ============================================ */
+.usecase-card {
+  background: var(--bg-white);
+  padding: 1.5rem;
+  box-shadow: 0 4px 20px rgba(45,47,46,0.08);
+  border-top: 4px solid var(--outline-variant);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.usecase-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.usecase-title {
+  font-family: var(--font-marker);
+  font-weight: 400;
+  font-size: 1.05rem;
+}
+
+.usecase-today {
+  font-family: var(--font-hand-clean);
+  font-size: 0.82rem;
+  color: var(--on-surface-variant);
+  line-height: 1.6;
+  font-weight: 300;
+  padding: 0.5rem 0.75rem;
+  background: var(--surface-container-low);
+  border-left: 3px solid var(--outline-variant);
+}
+
+.usecase-ai {
+  font-family: var(--font-hand-clean);
+  font-size: 0.82rem;
+  color: var(--on-surface);
+  line-height: 1.6;
+  font-weight: 300;
+  padding: 0.5rem 0.75rem;
+  background: rgba(99,161,255,0.1);
+  border-left: 3px solid var(--primary);
+}
+
+/* ============================================
    DECORATIVE
    ============================================ */
 .doodle-blob {
@@ -945,38 +996,140 @@ body.dark-mode-dots .nav-dot.active { background: var(--primary-container); bord
 
 
 <!-- ==========================================
-     SLIDE 3 — THE PAIN POINT [PLACEHOLDER]
+     SLIDE 3 — QUICK PULSE CHECK (Interactive)
      ========================================== -->
 <section class="page page--board" id="page-2" data-group="hook"
-  data-notes="[GET FROM PB REP] This slide needs a real stat or pain point from Private Banking. Something specific — hours spent on manual processes, client experience gaps, compliance bottlenecks. The more specific and recognisable, the better. It grounds the whole programme in THEIR reality.">
+  data-notes="This is your icebreaker. Read each question one at a time and pause for reactions on Teams. You want to see where the room is at with AI. The reactions tell you how to pitch the rest — if most people haven't used AI much, lean into the 'anyone can do this' message. If they're already active, lean into 'imagine what you could build with structured support.' Keep it light and fun. Say something like 'Right, let's find out where we're all starting from — use your Teams reactions to answer these.'">
 
   <!-- Board furniture -->
   <div class="board-magnet" style="top:16px;left:16px"></div>
   <div class="board-magnet" style="top:16px;right:16px"></div>
   <div class="board-magnet" style="bottom:16px;left:16px"></div>
   <div class="board-magnet" style="bottom:16px;right:16px"></div>
-  <div class="board-tape" style="top:0;left:40%;transform:rotate(-1deg)"></div>
 
   <div class="page-inner text-center">
     <div class="anim-fade-rise">
-      <span class="chip chip--tertiary mb-3" style="transform:rotate(-1deg)">Your World</span>
+      <span class="chip chip--tertiary mb-3" style="transform:rotate(-1deg)">Quick Exercise</span>
     </div>
 
-    <div class="anim-scale-pop" data-delay="0.3">
-      <div class="scribble-circle mb-4">
-        <div class="stat-number" style="color:var(--secondary);font-size:4.5rem">?</div>
+    <div class="anim-fade-rise" data-delay="0.2">
+      <h2 class="text-huge mb-2" style="transform:rotate(-0.5deg)">
+        Quick Pulse <span class="marker-underline marker-underline--primary">Check</span>
+      </h2>
+      <p class="on-surface-variant text-body-lg mb-4">Use your Teams reactions to answer each question</p>
+    </div>
+
+    <div class="grid-2 gap-3" style="max-width:800px;margin:0 auto">
+      <div class="anim-scale-pop" data-delay="0.4">
+        <div class="sticky sticky--yellow" style="transform:rotate(-2deg);padding:1.5rem;min-height:140px">
+          <div class="sticky-tape"></div>
+          <span class="material-symbols-outlined" style="font-size:2rem;margin-bottom:0.5rem;display:block">thumb_up</span>
+          <p style="font-size:1rem;font-weight:600;margin-bottom:0.3rem">Who has a paid AI account?</p>
+          <p style="font-size:0.82rem;opacity:0.7">Claude, ChatGPT, Copilot, Gemini...</p>
+        </div>
+      </div>
+      <div class="anim-scale-pop" data-delay="0.6">
+        <div class="sticky sticky--blue" style="transform:rotate(1.5deg);padding:1.5rem;min-height:140px">
+          <div class="sticky-tape"></div>
+          <span class="material-symbols-outlined" style="font-size:2rem;margin-bottom:0.5rem;display:block;color:var(--on-primary-container)">favorite</span>
+          <p style="font-size:1rem;font-weight:600;margin-bottom:0.3rem">Who has built something with AI?</p>
+          <p style="font-size:0.82rem;opacity:0.7">An app, automation, document, anything...</p>
+        </div>
+      </div>
+      <div class="anim-scale-pop" data-delay="0.8">
+        <div class="sticky sticky--red" style="transform:rotate(1deg);padding:1.5rem;min-height:140px">
+          <div class="sticky-tape"></div>
+          <span class="material-symbols-outlined" style="font-size:2rem;margin-bottom:0.5rem;display:block;color:var(--on-secondary-container)">emoji_objects</span>
+          <p style="font-size:1rem;font-weight:600;margin-bottom:0.3rem">Who uses AI every day at work?</p>
+          <p style="font-size:0.82rem;opacity:0.7">Summarising, drafting, researching...</p>
+        </div>
+      </div>
+      <div class="anim-scale-pop" data-delay="1.0">
+        <div class="sticky sticky--white" style="transform:rotate(-1deg);padding:1.5rem;min-height:140px">
+          <div class="sticky-tape"></div>
+          <span class="material-symbols-outlined" style="font-size:2rem;margin-bottom:0.5rem;display:block;color:var(--primary)">rocket_launch</span>
+          <p style="font-size:1rem;font-weight:600;margin-bottom:0.3rem">Who wants to learn to build with AI?</p>
+          <p style="font-size:0.82rem;opacity:0.7">That's why we're here.</p>
+        </div>
       </div>
     </div>
+  </div>
+</section>
 
-    <div class="anim-fade-rise" data-delay="0.5">
-      <h2 class="text-large mb-3" style="max-width:700px;margin:0 auto">
-        [Placeholder — specific Private Banking pain point from the rep]
+
+<!-- ==========================================
+     SLIDE 4 — SOUND FAMILIAR? (Use Cases)
+     ========================================== -->
+<section class="page page--white" id="page-3" data-group="hook"
+  data-notes="Walk through these one by one. These are REAL examples from Private Banking — the kind of problems your team deals with every day. Number one: client queries and meeting prep — you're reading emails, checking trust deeds, reviewing tax positions, drafting bespoke responses, manually logging everything. All manual. Number two: trust deed interpretation — repeatedly reading the same deeds to confirm powers, restrictions, consents. Every time. Number three: process monitoring and coaching — no visibility into bottlenecks, missing early warning signals, no proactive nudges when cases stall. These are exactly the kind of problems a hackathon team could prototype a solution for in a single day. Say: 'These aren't hypothetical — these came from your colleagues. And each one could be a working prototype by the end of hackathon day.'">
+
+  <div class="page-inner">
+    <div class="anim-fade-rise">
+      <span class="chip chip--secondary mb-2" style="transform:rotate(-1deg)">Your World Today</span>
+    </div>
+
+    <div class="anim-fade-rise" data-delay="0.2">
+      <h2 class="text-huge mb-2" style="transform:rotate(-0.5deg)">
+        Sound <span class="marker-underline marker-underline--secondary">familiar?</span>
       </h2>
     </div>
 
-    <div class="anim-fade-rise" data-delay="0.7">
-      <p class="on-surface-variant text-body-lg" style="max-width:550px;margin:0 auto">
-        What if your team could solve this — in a single day — using AI tools they've learned to wield in just 3 hours of training?
+    <div class="anim-fade-rise" data-delay="0.3">
+      <p class="on-surface-variant text-body-lg mb-4" style="max-width:700px">
+        These are the kinds of problems your team tackles every day. Each one is a potential hackathon project.
+      </p>
+    </div>
+
+    <div class="grid-3 mb-3">
+      <div class="anim-sticky-drop" data-delay="0.4">
+        <div class="usecase-card">
+          <div class="usecase-icon" style="background:var(--primary)">
+            <span class="material-symbols-outlined" style="color:white;font-size:1.5rem">mail</span>
+          </div>
+          <h3 class="usecase-title">Client Queries &amp; Meeting Prep</h3>
+          <div class="usecase-today">
+            <strong>Today:</strong> Reading emails, checking trust deeds, reviewing tax positions, drafting bespoke responses, manually logging interactions
+          </div>
+          <div class="usecase-ai">
+            <strong>With AI:</strong> Auto-summarise cases ahead of reviews, draft responses in the right tone, suggest next steps or escalations
+          </div>
+        </div>
+      </div>
+
+      <div class="anim-sticky-drop" data-delay="0.6">
+        <div class="usecase-card">
+          <div class="usecase-icon" style="background:var(--secondary)">
+            <span class="material-symbols-outlined" style="color:white;font-size:1.5rem">description</span>
+          </div>
+          <h3 class="usecase-title">Trust Deed Interpretation</h3>
+          <div class="usecase-today">
+            <strong>Today:</strong> Manually reading deeds to confirm powers, restrictions, consents, beneficiary classes — re-reading the same trust over and over
+          </div>
+          <div class="usecase-ai">
+            <strong>With AI:</strong> Ask in plain English: <em>"Can capital be distributed to adult grandchildren?"</em> or <em>"Who are the income beneficiaries?"</em>
+          </div>
+        </div>
+      </div>
+
+      <div class="anim-sticky-drop" data-delay="0.8">
+        <div class="usecase-card">
+          <div class="usecase-icon" style="background:var(--tertiary)">
+            <span class="material-symbols-outlined" style="color:var(--on-tertiary-container);font-size:1.5rem">monitoring</span>
+          </div>
+          <h3 class="usecase-title">Process Monitoring &amp; Coaching</h3>
+          <div class="usecase-today">
+            <strong>Today:</strong> No visibility into bottlenecks or delays, missing early warning signals, no proactive nudges when cases stall
+          </div>
+          <div class="usecase-ai">
+            <strong>With AI:</strong> Flag at-risk cases, suggest next actions, surface trends to managers, coach staff with just-in-time prompts
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="anim-fade-rise" data-delay="1.0">
+      <p class="text-center on-surface-variant" style="font-size:0.95rem;font-style:italic">
+        Each one of these could be a working prototype by the end of hackathon day.
       </p>
     </div>
   </div>
@@ -984,9 +1137,9 @@ body.dark-mode-dots .nav-dot.active { background: var(--primary-container); bord
 
 
 <!-- ==========================================
-     SLIDE 4 — WE'VE DONE THIS BEFORE (Proof)
+     SLIDE 5 — WE'VE DONE THIS BEFORE (Proof)
      ========================================== -->
-<section class="page page--white" id="page-3" data-group="proof"
+<section class="page page--white" id="page-4" data-group="proof"
   data-notes="This is social proof. We ran this exact format with our team — Planning and Productivity. Mixed grades, mixed abilities, people who had never coded a line in their lives. In under two hours, the facilitators had built working prototypes. Then we gave the tools to twenty colleagues. Three teams formed around real problems. Zero professional developers. Every single team delivered a working demo by end of day. Not mockups. Not slide decks. Working software.">
 
   <div class="page-inner">
@@ -1052,9 +1205,9 @@ body.dark-mode-dots .nav-dot.active { background: var(--primary-container); bord
 
 
 <!-- ==========================================
-     SLIDE 5 — WHAT THEY BUILT
+     SLIDE 6 — WHAT THEY BUILT
      ========================================== -->
-<section class="page page--board" id="page-4" data-group="proof"
+<section class="page page--board" id="page-5" data-group="proof"
   data-notes="Walk through the three prototypes. Team 1 built an AI Performance Coach for contact centre managers. This one went to Dragons' Den and secured a hundred and ninety thousand pounds of funding to build a full production version. Let that land — a hackathon prototype, built by non-technical people, is now being productionised. Team 2 built a Change Management Tracker. Team 3 built a Service Resourcing Tool. Not mockups. Working software. And they didn't stop — on their own time, they kept building personal projects because they wanted to.">
 
   <div class="board-magnet" style="top:16px;left:16px"></div>
@@ -1142,9 +1295,9 @@ body.dark-mode-dots .nav-dot.active { background: var(--primary-container); bord
 
 
 <!-- ==========================================
-     SLIDE 6 — UGLY BABY (Catmull Quote)
+     SLIDE 7 — UGLY BABY (Catmull Quote)
      ========================================== -->
-<section class="page page--white" id="page-5" data-group="proof"
+<section class="page page--white" id="page-6" data-group="proof"
   data-notes="This is an important reframe. Ed Catmull, co-founder of Pixar, said every great film started as an ugly baby — a terrible first draft that needed protecting until it grew into something great. Our hackathon prototypes are ugly babies. And that's exactly what they should be. The AI Performance Coach started as one of those ugly babies — and it just got a hundred and ninety thousand pounds to become a real product. That's the power of prototyping.">
 
   <div class="page-inner page-inner--narrow text-center">
@@ -1174,9 +1327,9 @@ body.dark-mode-dots .nav-dot.active { background: var(--primary-container); bord
 
 
 <!-- ==========================================
-     SLIDE 7 — THE 4-WEEK PROGRAMME
+     SLIDE 8 — THE 4-WEEK PROGRAMME
      ========================================== -->
-<section class="page page--primary" id="page-6" data-group="programme"
+<section class="page page--primary" id="page-7" data-group="programme"
   data-notes="This is the programme structure. Three one-hour virtual sessions then the hackathon day. Session 1 covers the basics of AI — what LLMs and agents are, how they work, where they fit in banking. Session 2 is about planning using AI — how to think with it, prompt effectively, use it as a planning tool. Session 3 is about developing your business problems — identifying the real PB pain points you'll solve on hackathon day, forming teams, scoping projects. Week 4 is the hackathon itself, 10am to 4pm.">
 
   <div class="page-inner">
@@ -1234,9 +1387,9 @@ body.dark-mode-dots .nav-dot.active { background: var(--primary-container); bord
 
 
 <!-- ==========================================
-     SLIDE 7 — HACKATHON DAY AGENDA
+     SLIDE 9 — HACKATHON DAY AGENDA
      ========================================== -->
-<section class="page page--board" id="page-7" data-group="programme"
+<section class="page page--board" id="page-8" data-group="programme"
   data-notes="The hackathon day runs 10am to 4pm. Quick kickoff, then straight into building. Facilitators on hand throughout. Lunch break with a lightning talk. Afternoon polish. Demos and judging from 3pm — 3 minutes to pitch, 2 minutes Q&A per team. Awards and close at 4. The format is proven — we ran the same structure and every team delivered a working demo.">
 
   <div class="board-magnet" style="top:16px;left:16px"></div>
@@ -1348,9 +1501,9 @@ body.dark-mode-dots .nav-dot.active { background: var(--primary-container); bord
 
 
 <!-- ==========================================
-     SLIDE 8 — WHY THIS MATTERS
+     SLIDE 10 — WHY THIS MATTERS
      ========================================== -->
-<section class="page page--dark" id="page-8" data-group="value"
+<section class="page page--dark" id="page-9" data-group="value"
   data-notes="Here's the wider context. 73 percent of workers are already using AI weekly. But only 29 percent rate their own AI literacy as advanced. That gap is the opportunity — and the risk. A third of UK banks are already piloting AI agents that can take actions on their own. The organisations winning at AI aren't the ones buying it — they're the ones building with it. This programme gives your team that edge. It's not just about the hackathon — it's about lasting AI literacy, competitive advantage, and freeing up time to spend where it matters: with clients.">
 
   <div class="page-inner">
@@ -1412,9 +1565,9 @@ body.dark-mode-dots .nav-dot.active { background: var(--primary-container); bord
 
 
 <!-- ==========================================
-     SLIDE 9 — WHAT YOU WALK AWAY WITH
+     SLIDE 11 — WHAT YOU WALK AWAY WITH
      ========================================== -->
-<section class="page page--board" id="page-9" data-group="value"
+<section class="page page--board" id="page-10" data-group="value"
   data-notes="Make this concrete. They're investing 3 hours of training plus a full day. Here's exactly what they get back. AI skills they can use immediately — not theory, practice. A working prototype — not a slide deck, actual software that solves a real PB problem. A network of AI-literate colleagues who've been through the same journey. And a story to tell — to their leaders, their clients, and their own careers. They didn't just learn about AI. They built with it.">
 
   <div class="board-magnet" style="top:16px;left:16px"></div>
@@ -1467,9 +1620,9 @@ body.dark-mode-dots .nav-dot.active { background: var(--primary-container); bord
 
 
 <!-- ==========================================
-     SLIDE 10 — YOUR MOVE (Close)
+     SLIDE 12 — YOUR MOVE (Close)
      ========================================== -->
-<section class="page page--primary" id="page-10" data-group="close"
+<section class="page page--primary" id="page-11" data-group="close"
   data-notes="Energy and excitement. This is the call to action. Remind them: 4 weeks from now, you'll have built something real. Not watched a webinar. Not read a whitepaper. Built it. Give them the homework — start thinking about the business problems they face every day. What's manual, what's frustrating, what takes too long. Bring their best problem to Session 3. That becomes their hackathon project. Share the dates once confirmed. Open for questions.">
 
   <div class="page-inner text-center">
