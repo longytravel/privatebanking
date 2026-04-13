@@ -871,9 +871,9 @@ body.dark-mode-dots .nav-dot.active { background: var(--primary-container); bord
      LOADING SCREEN
      ========================================== -->
 <div class="loading-screen" id="loadingScreen">
-  <div class="loading-line">What if the people closest to the problem</div>
-  <div class="loading-line">could build the solution?</div>
-  <div class="loading-line">In a single day.</div>
+  <div class="loading-line">Three hours of training.</div>
+  <div class="loading-line">One day of building.</div>
+  <div class="loading-line">Zero developers.</div>
   <div class="loading-prompt">Press any key or scroll to begin</div>
 </div>
 
@@ -1079,7 +1079,19 @@ body.dark-mode-dots .nav-dot.active { background: var(--primary-container); bord
 
     <div class="grid-2 gap-3" style="max-width:800px;margin:0 auto">
       <div class="anim-scale-pop" data-delay="0.4">
-        <div class="sticky sticky--yellow" style="transform:rotate(-2deg);padding:1.25rem;min-height:140px">
+        <div class="sticky sticky--red" style="transform:rotate(-2deg);padding:1.25rem;min-height:140px">
+          <div class="sticky-tape"></div>
+          <p style="font-size:1rem;font-weight:600;margin-bottom:0.5rem">Who uses AI every day at work?</p>
+          <p style="font-size:0.78rem;opacity:0.7;margin-bottom:0.5rem">Summarising, drafting, researching...</p>
+          <div style="font-size:0.82rem;line-height:1.8">
+            <div>&#128079; Every single day</div>
+            <div>&#128077; Most days</div>
+            <div>&#128562; Just getting started</div>
+          </div>
+        </div>
+      </div>
+      <div class="anim-scale-pop" data-delay="0.6">
+        <div class="sticky sticky--yellow" style="transform:rotate(1.5deg);padding:1.25rem;min-height:140px">
           <div class="sticky-tape"></div>
           <p style="font-size:1rem;font-weight:600;margin-bottom:0.5rem">Who has a paid AI account?</p>
           <p style="font-size:0.78rem;opacity:0.7;margin-bottom:0.5rem">Claude, ChatGPT, Copilot, Gemini...</p>
@@ -1090,8 +1102,8 @@ body.dark-mode-dots .nav-dot.active { background: var(--primary-container); bord
           </div>
         </div>
       </div>
-      <div class="anim-scale-pop" data-delay="0.6">
-        <div class="sticky sticky--blue" style="transform:rotate(1.5deg);padding:1.25rem;min-height:140px">
+      <div class="anim-scale-pop" data-delay="0.8">
+        <div class="sticky sticky--blue" style="transform:rotate(1deg);padding:1.25rem;min-height:140px">
           <div class="sticky-tape"></div>
           <p style="font-size:1rem;font-weight:600;margin-bottom:0.5rem">Who has built something with AI?</p>
           <p style="font-size:0.78rem;opacity:0.7;margin-bottom:0.5rem">An app, automation, document, anything...</p>
@@ -1099,18 +1111,6 @@ body.dark-mode-dots .nav-dot.active { background: var(--primary-container); bord
             <div>&#128077; A simple thing</div>
             <div>&#10084;&#65039; Something I'm proud of</div>
             <div>&#128514; Does prompting count?</div>
-          </div>
-        </div>
-      </div>
-      <div class="anim-scale-pop" data-delay="0.8">
-        <div class="sticky sticky--red" style="transform:rotate(1deg);padding:1.25rem;min-height:140px">
-          <div class="sticky-tape"></div>
-          <p style="font-size:1rem;font-weight:600;margin-bottom:0.5rem">Who uses AI every day at work?</p>
-          <p style="font-size:0.78rem;opacity:0.7;margin-bottom:0.5rem">Summarising, drafting, researching...</p>
-          <div style="font-size:0.82rem;line-height:1.8">
-            <div>&#128079; Every single day</div>
-            <div>&#128077; Most days</div>
-            <div>&#128562; Just getting started</div>
           </div>
         </div>
       </div>
@@ -1790,7 +1790,7 @@ body.dark-mode-dots .nav-dot.active { background: var(--primary-container); bord
   }
 
   document.addEventListener('keydown', function loadKey(e) {
-    if (!loaded) { e.preventDefault(); dismissLoading(); document.removeEventListener('keydown', loadKey); }
+    if (!loaded) { e.preventDefault(); e.stopImmediatePropagation(); dismissLoading(); document.removeEventListener('keydown', loadKey); }
   }, { once: false });
 
   document.addEventListener('wheel', function loadWheel() {
