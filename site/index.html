@@ -1801,8 +1801,7 @@ body.dark-mode-dots .nav-dot.active { background: var(--primary-container); bord
     if (!loaded) { dismissLoading(); }
   }, { once: true });
 
-  // Auto-dismiss after 5s
-  setTimeout(dismissLoading, 5000);
+  // No auto-dismiss — wait for presenter to press a key or scroll
 
   // --- Build Nav Dots ---
   function buildNavDots() {
